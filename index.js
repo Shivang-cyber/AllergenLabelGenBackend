@@ -1,28 +1,46 @@
+require("dotenv").config({ path: `${process.cwd()}/.env` });
 const express = require("express");
-const multer = require("multer");
-const processExcelFile = require("./utils/processExcelFile");
-
+const globalErrorHandler = require("./controller/errorController");
+const catchAsync = require("./utils/catchAsync");
+const upload = require("./middleware/upload");
+const {uploadHandler, client} = require("./controller/uploadController");
+const WebSocket = require('ws');
+const http = require('http');
+const cors = require("cors");
+const PORT = process.env.PORT || 3000;
 const app = express();
-
-const upload = multer({
-  dest: "uploads/",
-  fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype !==
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ) {
-      return cb(new Error("Invalid file type"));
-    }
-    cb(null, true);
-  },
+app.use(cors());
+app.use(express.json());
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
-app.post("/upload", upload.single("file"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-  const result = await processExcelFile(req.file.path);
-  res.json(result);
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+
+  const clientId = Math.random().toString(36).substring(2,9);
+  client.set(clientId, ws);
+  ws.send(JSON.stringify({ type: "connected" ,clientId }));
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    client.delete(clientId);
+  });
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.post("/upload", upload.single("file"), uploadHandler);
+
+app.use(
+  "*",
+  catchAsync(async (req, res, next) => {
+    throw new AppError(`Can't find ${req.originalUrl} on this server`, 404);
+  })
+);
+
+app.use(globalErrorHandler);
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
