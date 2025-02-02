@@ -5,6 +5,8 @@ const uploadHandler = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
+  console.log('here');
+  
   const filePath = req.file.path;
   const clientId = req.body.clientId;
   if (!clientId) {

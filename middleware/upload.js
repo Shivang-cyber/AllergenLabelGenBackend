@@ -1,5 +1,5 @@
 const multer = require("multer");
-
+const AppError = require("../utils/appError");
 const upload = multer({
   dest: "uploads/",
   fileFilter: (req, file, cb) => {
@@ -7,7 +7,7 @@ const upload = multer({
       file.mimetype !==
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
-      return cb(new Error("Invalid file type"));
+      return cb(new AppError("Invalid file type", 400));
     }
     cb(null, true);
   },

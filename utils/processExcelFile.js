@@ -1,6 +1,6 @@
 const xlsx = require("xlsx");
 const getAllergenDataBatch = require("./getAllergenData");
-const AppError = require("./AppError");
+const AppError = require("./appError");
 
 const groupedData = (data) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
