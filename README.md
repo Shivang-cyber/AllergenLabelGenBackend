@@ -1,111 +1,43 @@
-Allergen Label Generator - WebSocket Based API
+# Allergen Label Generator
 
-This project provides a WebSocket-based API for processing Excel files that contain product ingredient data. The backend extracts allergen information and sends it asynchronously to connected clients.
+This project is designed to generate allergen labels by fetching data from the Open Food Facts API and sending it over WebSocket (WSS).
 
-Features
+## Setup
 
-Upload an Excel file with product ingredients.
+1. Clone the repository:
+    ```sh
+    git clone <repository-url>
+    cd AllergenLabelGen
+    ```
 
-Process ingredients in batches using an external API.
+2. Install dependencies:
+    ```sh
+    npm install
+    ```
 
-Identify allergens and flag unknown ingredients.
+3. Set up the `.env` file with the following variables:
+    ```
+    OPEN_FOOD_FACT_API=https://world.openfoodfacts.org/cgi/search.pl
+    BATCH_SIZE=3
+    INITIAL_DELAY=2000
+    PORT=3000
+    NODE_ENV=production
+    ```
 
-Send results asynchronously via WebSocket.
+## Usage
 
-Setup Instructions
+1. Start the server:
+    ```sh
+    npm start
+    ```
 
-1️⃣ Prerequisites
+2. Get the front end from [gitlink](<gitlink>).
 
-Ensure you have the following installed:
+3. Open your browser and navigate to [link](<link>).
 
-Node.js (v20+)
+4. Upload the file of the selected type and get the result asynchronously.
 
-npm (comes with Node.js)
+## Notes
 
-2️⃣ Clone the Repository
-
-git clone <your-repo-link>
-cd allergen-label-generator
-
-3️⃣ Install Dependencies
-
-npm install
-
-4️⃣ Setup Environment Variables
-
-Create a .env file in the root directory and add the following:
-
-OPEN_FOOD_FACT_API=https://world.openfoodfacts.org/cgi/search.pl
-BATCH_SIZE=3
-INITIAL_DELAY=2000
-PORT=3000
-NODE_ENV=production
-
-5️⃣ Start the Server
-
-npm start
-
-The server will start on http://localhost:3000/.
-
-How to Use
-
-📌 WebSocket Connection
-
-The backend uses WebSocket (wss://) for real-time communication.
-
-Clients connect to the WebSocket server to receive updates.
-
-Each upload triggers batch processing of ingredients.
-
-Results are sent asynchronously over WebSocket.
-
-📌 Uploading an Excel File
-
-Get the frontend from:
-
-git clone git@gitlink.git
-
-Open the frontend in a browser (link).
-
-Upload a .xlsx file containing ingredient data.
-
-The server will process the file and send real-time results.
-
-📌 Expected Response (WebSocket)
-
-Once processing is done, the client will receive:
-
-{
-  "recipe_name": "Product Name",
-  "allergens": ["Milk", "Nuts"],
-  "flagged_ingredients": { "Milk": ["Lactose"] },
-  "unrecognized_ingredients": ["Xylooligosaccharide"],
-  "message": "Processed successfully."
-}
-
-Troubleshooting
-
-❌ Error: Error.capturesStackTrace is not a function
-
-Solution: Use this fixed appError.js:
-
-class AppError extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
-    this.isOperational = true;
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-}
-module.exports = AppError;
-
-❌ Invalid File Type Error
-
-Ensure the uploaded file is an .xlsx file.
-
-License
-
-MIT License © 2025
+- Ensure that the server is running and the front end is properly set up to communicate over WSS.
+- The application is configured to run in production mode by default.
