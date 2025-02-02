@@ -100,8 +100,6 @@ const processExcelFile = async (filePath, client) => {
           : "Processed successfully.",
     };
 
-    console.log(resultant);
-
     client.send(JSON.stringify(resultant));
   }
 
