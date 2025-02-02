@@ -31,9 +31,9 @@ This project is designed to generate allergen labels by fetching data from the O
     npm start
     ```
 
-2. Get the front end from [gitlink](<gitlink>).
+2. Get the front end from [gitlink](<https://github.com/Shivang-cyber/AllergenFront>).
 
-3. Open your browser and navigate to [link](<link>).
+3. Open your browser and navigate to [link](<http://localhost:3001>).
 
 4. Upload the file of the selected type and get the result asynchronously.
 
