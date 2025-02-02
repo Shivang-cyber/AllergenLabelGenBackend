@@ -9,7 +9,10 @@ const groupedData = (data) => {
 
   return data.reduce((acc, { Product, Ingredients }) => {
     if (!Product || !Ingredients) {
-      throw new AppError("Missing required fields: Product or Ingredients", 400);
+      throw new AppError(
+        "Missing required fields: Product or Ingredients",
+        400
+      );
     }
 
     const existing = acc.find((item) => item.Product === Product);
@@ -26,7 +29,7 @@ const processExcelFile = async (filePath, client) => {
   if (!filePath) {
     throw new AppError("File path is required", 400);
   }
-  
+
   const workbook = xlsx.readFile(filePath);
   if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) {
     throw new AppError("Invalid Excel file or missing sheets", 400);
@@ -48,7 +51,10 @@ const processExcelFile = async (filePath, client) => {
     const ingredients = row["Ingredients"].map((i) => i.trim());
 
     if (!ingredients.length) {
-      throw new AppError(`No ingredients found for product: ${recipeName}`, 400);
+      throw new AppError(
+        `No ingredients found for product: ${recipeName}`,
+        400
+      );
     }
 
     let allergens = new Set();
@@ -83,19 +89,24 @@ const processExcelFile = async (filePath, client) => {
       throw new AppError("Failed to process allergen data", 500);
     }
 
-    client.send(
-      JSON.stringify({
-        recipe_name: recipeName,
-        allergens: Array.from(allergens),
-        flagged_ingredients: flaggedIngredients,
-        unrecognized_ingredients: unrecognizedIngredients,
-        message:
-          unrecognizedIngredients.length > 0
-            ? "Some ingredients were not recognized."
-            : "Processed successfully.",
-      })
-    );
+    const resultant = {
+      recipe_name: recipeName,
+      allergens: Array.from(allergens),
+      flagged_ingredients: flaggedIngredients,
+      unrecognized_ingredients: unrecognizedIngredients,
+      message:
+        unrecognizedIngredients.length > 0
+          ? "Some ingredients were not recognized."
+          : "Processed successfully.",
+    };
+
+    console.log(resultant);
+
+    client.send(JSON.stringify(resultant));
   }
+
+  console.log("Processing complete");
+  return;
 };
 
 module.exports = processExcelFile;
