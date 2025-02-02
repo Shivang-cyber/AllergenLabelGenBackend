@@ -1,6 +1,6 @@
 const xlsx = require("xlsx");
 const getAllergenDataBatch = require("./getAllergenData");
-
+const AppError = require("./AppError");
 const groupedData = (data) => {
   return data.reduce((acc, { Product, Ingredients }) => {
     const existing = acc.find((item) => item.Product === Product);
@@ -20,6 +20,9 @@ const processExcelFile = async (filePath, client) => {
   const data = xlsx.utils.sheet_to_json(sheet);
 
   const grouped = groupedData(data);
+  if (!grouped) {
+    throw new AppError("No data found in the file", 404);
+  }
 
   let caching = new Map();
 

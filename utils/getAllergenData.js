@@ -6,7 +6,7 @@ const INITIAL_DELAY = process.env.INITIAL_DELAY || 1000;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const fetchWithRetry = async (ingredient, retries = 3, delayTime = INITIAL_DELAY) => {
+const fetchWithRetry = async (ingredient, retries = 5, delayTime = INITIAL_DELAY) => {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await axios.get(API_URL, {
